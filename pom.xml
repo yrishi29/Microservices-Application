@@ -17,7 +17,8 @@
   </parent>
 
   <modules>
-    <module>product-service</module>  <!-- Add the child module here -->
+    <module>product-service</module>
+    <module>inventory-service</module><!-- Add the child module here -->
     <!-- Add other modules as needed -->
   </modules>
 
