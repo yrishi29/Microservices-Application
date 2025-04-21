@@ -18,7 +18,8 @@
 
   <modules>
     <module>product-service</module>
-    <module>inventory-service</module><!-- Add the child module here -->
+    <module>inventory-service</module>
+    <module>order-service</module><!-- Add the child module here -->
     <!-- Add other modules as needed -->
   </modules>
 
