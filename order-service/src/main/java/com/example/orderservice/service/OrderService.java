@@ -4,6 +4,7 @@ import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.model.Order;
 import com.example.orderservice.repository.OrderRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,22 +13,41 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class OrderService {
-    private final OrderRepository orderRepository;
-    private final WebClient.Builder webClient;
+
+    private  OrderRepository orderRepository;
+    private  WebClient.Builder webClient;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, WebClient.Builder webClient) {
+    public OrderService(WebClient.Builder webClientBuilder, OrderRepository orderRepository) {
+        this.webClient = webClientBuilder;
         this.orderRepository = orderRepository;
-        this.webClient = webClient;
     }
 
     public void placeOrder(OrderRequest orderRequest) {
         Order order = mapToOrder(orderRequest);
-        Boolean result = (Boolean)this.webClient.build().get().uri("http://localhost:59063/api/inventory?skuCode=" + order.getSkuCode() + "&quantity=" + order.getQuantity(), new Object[0]).retrieve().bodyToMono(Boolean.class).block();
+
+
+        Boolean result = webClient.build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("http")
+                        .host("inventory-service")  //
+                        .path("/api/inventory")
+                        .queryParam("skuCode", order.getSkuCode())
+                        .queryParam("quantity", order.getQuantity())
+                        .build())
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+
         if (Boolean.FALSE.equals(result)) {
             throw new RuntimeException("Product is out of stock!");
         }
+
+
+        orderRepository.save(order);
     }
 
     private static Order mapToOrder(OrderRequest orderRequest) {
@@ -39,4 +59,3 @@ public class OrderService {
         return order;
     }
 }
-
