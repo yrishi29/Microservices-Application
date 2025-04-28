@@ -25,7 +25,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public void placeOrder(OrderRequest orderRequest) {
+    public String placeOrder(OrderRequest orderRequest) {
         Order order = mapToOrder(orderRequest);
 
 
@@ -48,6 +48,7 @@ public class OrderService {
 
 
         orderRepository.save(order);
+        return "Order Placed Successfully";
     }
 
     private static Order mapToOrder(OrderRequest orderRequest) {
