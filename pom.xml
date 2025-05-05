@@ -27,6 +27,7 @@
     <module>order-service</module>
     <module>discovery-server</module>
     <module>api-gatewy</module>
+    <module>notification-service</module>
     <!-- Add other modules as needed -->
   </modules>
 
